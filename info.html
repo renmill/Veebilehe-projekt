@@ -1,20 +1,54 @@
 <!DOCTYPE html>
 <html lang="et">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Koodiracer – info</title>
-  <link rel="stylesheet" href="stiil.css">
-</head>
-<body>
-  <h1>Mis on Koodiracer?</h1>
-  <p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-  </p>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koodiracer – info</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto+Mono:wght@400;700&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet" href="stiil.css">
 
-  <nav>
-    <a href="index.html">Avaleht</a> |
-    <a href="äpp.html">Mängima</a>
-  </nav>
-</body>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <!-- lihtne SVG-logo, tüpograafiline viide kirjutusmasinale -->
+        <div class="logo" aria-hidden="true">
+          <a href="index.html">
+            <img src="logo.svg" alt="Koodiraceri logo" width="58" height="58">
+          </a>
+        </div>
+
+        <nav class="top-nav" aria-label="Peamenüü">
+          <a href="info.html">Mis on koodiracer?</a>
+          <a href="äpp.html" class="btn-primary">Alusta trükkimist</a>
+          <a href="statistika.html">Info</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="hero">
+        <div class="container">
+
+          <h1>Mis on Koodiracer?</h1>
+          <p>
+            Põhimõttelist tuleb siia tekst meie veebilehe arengust. Mis see on ja kõik muu oluline. Basically nagu 
+            lühike kokkuvõte meie projektist. About Us sektsioon. vms mdea
+          </p>
+        </div>
+
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>© <span id="year">2025</span> Koodiracer. Kõik õigused kaitstud.</p>
+        <p class="small-links">
+          <a href>Privaatsus</a> · <a href>Kasutustingimused</a>
+        </p>
+      </div>
+    </footer>
+
+  </body>
 </html>

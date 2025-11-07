@@ -1,21 +1,114 @@
 <!DOCTYPE html>
 <html lang="et">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Koodiracer – avaleht</title>
-  <link rel="stylesheet" href="stiil.css">
-</head>
-<body>
-  <header>
-    <h1>Lorem Impsum</h1>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-  </header>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Koodiracer — avaleht</title>
 
-  <nav>
-    <a href="info.html">Info</a> |
-    <a href="äpp.html">Alusta mängu</a> |
-    <a href="edetabel.html">Edetabel</a>
-  </nav>
-</body>
+    <!-- Google Fonts: neutral sans + monospace accent (valikuline) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto+Mono:wght@400;700&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet" href="stiil.css">
+    <link rel="stylesheet" href="landing.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Mine sisu juurde</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <!-- lihtne SVG-logo, tüpograafiline viide kirjutusmasinale -->
+        <div class="logo" aria-hidden="true">
+          <a href="index.html">
+            <img src="logo.svg" alt="Koodiraceri logo" width="58" height="58">
+          </a>
+        </div>
+
+        <nav class="top-nav" aria-label="Peamenüü">
+          <a href="info.html">Mis on koodiracer?</a>
+          <a href="äpp.html" class="btn-primary">Alusta trükkimist</a>
+          <a href="statistika.html">Info</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-text">
+            <h1 class="title">Koodiracer</h1>
+            <p class="lede">
+              Kiirus + täpsus. Pane enda trükkimisoskused proovile ja paranda
+              enda trükkimisoskusi.
+
+            </p>
+
+            <p class="meta">
+              Õpi süntaksit • Erinevad raskusastmed • Statistika sinu arengust
+            </p>
+
+            <div class="cta-row">
+              <a href="äpp.html" class="btn-primary large">Alusta trükkimist</a>
+              <a href="info.html" class="btn-ghost">Loe rohkem</a>
+            </div>
+          </div>
+
+          <aside class="hero-card" aria-hidden="true">
+            <!-- visuaalne illustratsioon / näidis -->
+            <div class="screen-mock">
+              <div class="screen-top">
+                <span class="lamp"></span>
+                <span class="lamp"></span>
+                <span class="lamp"></span>
+              </div>
+              <div class="screen-body">
+                <div class="line"><span class="gutter">1</span><span
+                    class="txt">function tereTulemast() {</span></div>
+                <div class="line"><span class="gutter">2</span><span
+                    class="txt"> console.log("Tere, koodiracer!");</span></div>
+                <div class="line"><span class="gutter">3</span><span
+                    class="txt">}</span></div>
+              </div>
+            </div>
+            <p class="mock-caption">Pane end proovile!</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="features container">
+        <h2 class="section-title">Mida saad oodata</h2>
+
+        <ul class="feature-list" aria-hidden="false">
+          <li>
+            <h3>Erinevad keeled</h3>
+            <p>Harjuta erinevate programmeerimiskeelte süntaksit, alates
+              JavaScriptist kuni Pythonini.</p>
+          </li>
+
+          <li>
+            <h3>Progress ja statistika</h3>
+            <p>Jälgi oma täpsust, kiirust ja edenemist.</p>
+          </li>
+
+          <li>
+            <h3>Tume režiim</h3>
+            <p>Visuaalne stiil, mis annab ettekujutuse nagu oleksid
+              koodiredaktoris.</p>
+          </li>
+        </ul>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>© <span id="year">2025</span> Koodiracer. Kõik õigused kaitstud.</p>
+        <p class="small-links">
+          <a href>Privaatsus</a> · <a href>Kasutustingimused</a>
+        </p>
+      </div>
+    </footer>
+
+    
+  </body>
 </html>
