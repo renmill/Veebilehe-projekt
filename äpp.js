@@ -8,7 +8,7 @@ let caret = document.createElement('span');
 
 caret.className = 'caret';
 
-const text = "Tere tulemast Koodiraceri mängu! Kirjuta see tekst õigesti ja võimalikult kiiresti.";
+const text = "See siin on ainult test tekst, päris teksti(kood) tuleb siis kui see näide töötab 100%.";
 
 let startTime = null;
 let finished = false;
@@ -32,6 +32,8 @@ function reset() {
     errorsEl.textContent = '0 viga';
 }
 
+let x = 0;
+
 function updateTyping() {
     const input = hiddenInput.value;
     const chars = textDisplay.querySelectorAll('span');
@@ -39,20 +41,28 @@ function updateTyping() {
     let correct = 0;
     let wrong = 0;
 
-    if (startTime === null && `input.length` > 0) startTime = performance.now();
-    caret.remove(); // remove old caret before inserting again
-    if (input.length >= chars.length) {
+    // console.log(input.length, Array.from(textDisplay.querySelectorAll('span.correct, span.incorrect')).length);
+
+    if (startTime === null && `input.length` > 0) {console.log("here");startTime = Date.now()};
+    // remove old caret before inserting again
+    caret.remove();
+    // console.log("caret asukoht", input.length)
+    if (input.length >= Array.from(textDisplay.querySelectorAll('span.correct, span.incorrect')).length) {
         // place caret at end
         textDisplay.insertBefore(caret, textDisplay.children[input.length+1]);
 
     } else {
         // place caret before the char at index
-        textDisplay.insertBefore(caret, textDisplay.children[input.length]);
+        textDisplay.insertBefore(caret, textDisplay.children[input.length-1]);
     }
+     
+    console.log(input);
+    console.log("typedChar", input[input.length - 1]);
     chars.forEach((span, i) => {
         const typedChar = input[i];
-
+        
         span.classList.remove('correct', 'incorrect');
+        console.log(span)
         if (typedChar == null) { return };
         if (typedChar === span.textContent) {
             span.classList.add('correct');
@@ -66,9 +76,8 @@ function updateTyping() {
     
 
 
-    console.log(textDisplay.childNodes);
 
-    const elapsed = startTime ? (performance.now() - startTime) / 1000 / 60 : 1;
+    const elapsed = Math.floor((Date.now() - startTime) / 1000 );
     const wpm = correct ? Math.round((input.length / 5) / elapsed) : 0;
     const accuracy = input.length ? Math.round((correct / input.length) * 100) : 100;
 
@@ -84,7 +93,7 @@ function updateTyping() {
     }
 }
 
-// focus click area
+// hoiame textDisplay fookuses
 textDisplay.addEventListener('click', () => hiddenInput.focus());
 hiddenInput.addEventListener('input', updateTyping);
 restartBtn.addEventListener('click', reset);

@@ -55,10 +55,11 @@
   display: inline-block;
   width: 2px;
   height: 1.2em;
-  background: var(--accent-2);
+  
   vertical-align: bottom;
   animation: blink 1s steps(1) infinite;
   margin-left: -1px;
+  background-color: white;
 }
 
 @keyframes blink {
