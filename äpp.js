@@ -53,7 +53,7 @@ function updateTyping() {
 
     chars.forEach((span, i) => {
         const typedChar = input[i];
-        
+
         span.classList.remove('correct', 'incorrect');
         if (typedChar == null) { return }
         else if (typedChar === span.textContent) {
@@ -77,14 +77,14 @@ function updateTyping() {
     } else {
         textDisplay.appendChild(caret);
     }
-    
 
-    
-     
+
+
+
     console.log(input);
     console.log("typedChar", input[input.length - 1]);
-    
-    
+
+
 
     const elapsed = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
     const wpm = elapsed > 0 ? Math.round((input.length / 5) / elapsed) : 0;
