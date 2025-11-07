@@ -8,7 +8,7 @@ let caret = document.createElement('span');
 
 caret.className = 'caret';
 
-const text = "See siin on ainult test tekst, päris teksti(kood) tuleb siis kui see näide töötab 100%.";
+const text = `\nfunction randomGreeting() {\n\tconst index = Math.floor(Math.random() * greetings.length);\n\treturn greetings[index];\n}\n\nconsole.log(randomGreeting());\n";`;
 
 let startTime = null;
 let finished = false;
@@ -17,9 +17,20 @@ function renderText() {
     textDisplay.innerHTML = '';
     for (const ch of text) {
         const span = document.createElement('span');
-        span.textContent = ch;
+
+        if (ch === '\n') {
+            span.className = 'newline';
+            span.textContent = '\n';
+        } else if (ch === '\t') {
+            span.textContent = '\t';
+        } else {
+            span.textContent = ch;
+        }
+
         textDisplay.appendChild(span);
     }
+    // after rendering text, try to adjust font size to fit the container
+    adjustFontSizeToFit();
 }
 
 function reset() {
@@ -54,18 +65,18 @@ function updateTyping() {
         }
 
     });
-    console.log(correct, wrong);
-    // start timer when the user types the first character
+
     if (startTime === null && input.length > 0) {
         startTime = Date.now();
     }
 
-    // remove old caret before inserting again
     caret.remove();
-    // ensure we insert the caret at a valid position
-    const caretIndex = Math.min(input.length, textDisplay.children.length);
-   
-    textDisplay.insertBefore(caret, textDisplay.children[caretIndex]);
+    const caretIndex = Math.min(input.length, chars.length);
+    if (chars[caretIndex]) {
+        textDisplay.insertBefore(caret, chars[caretIndex]);
+    } else {
+        textDisplay.appendChild(caret);
+    }
     
 
     
@@ -74,9 +85,6 @@ function updateTyping() {
     console.log("typedChar", input[input.length - 1]);
     
     
-    
-
-
 
     const elapsed = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
     const wpm = elapsed > 0 ? Math.round((input.length / 5) / elapsed) : 0;
@@ -93,6 +101,42 @@ function updateTyping() {
         textDisplay.insertAdjacentHTML('beforeend', `<div style="margin-top:10px;color:var(--muted)">Valmis!</div>`);
     }
 }
+
+function adjustFontSizeToFit() {
+    const el = textDisplay;
+    const cs = window.getComputedStyle(el);
+    let fontSize = parseFloat(cs.fontSize);
+    const minFont = 10; // don't go smaller than 10px
+    el.style.fontSize = fontSize + 'px';
+
+    let attempts = 0;
+    while ((el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth) && fontSize > minFont && attempts < 40) {
+        fontSize -= 1;
+        el.style.fontSize = fontSize + 'px';
+        attempts++;
+    }
+}
+
+hiddenInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const start = hiddenInput.selectionStart;
+        const end = hiddenInput.selectionEnd;
+        hiddenInput.value = hiddenInput.value.slice(0, start) + '\n' + hiddenInput.value.slice(end);
+        hiddenInput.selectionStart = hiddenInput.selectionEnd = start + 1;
+        updateTyping();
+    } else if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = hiddenInput.selectionStart;
+        const end = hiddenInput.selectionEnd;
+        hiddenInput.value = hiddenInput.value.slice(0, start) + '\t' + hiddenInput.value.slice(end);
+        hiddenInput.selectionStart = hiddenInput.selectionEnd = start + 1;
+        updateTyping();
+    }
+});
+
+
+window.addEventListener('resize', () => adjustFontSizeToFit());
 
 // hoiame textDisplay fookuses
 textDisplay.addEventListener('click', () => hiddenInput.focus());

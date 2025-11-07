@@ -13,6 +13,11 @@
   line-height: 1.6;
   text-align: left;
   cursor: text;
+  /* preserve whitespace and line breaks for code snippets */
+  white-space: pre-wrap;
+  /* make tab characters render like 4 spaces */
+  tab-size: 4;
+  -moz-tab-size: 4;
 }
 
 .text-display span.correct {
@@ -29,6 +34,11 @@
   opacity: 0;
   position: absolute;
   pointer-events: none;
+}
+
+/* ensure hidden textarea can't be resized if the user inspects it */
+#hiddenInput {
+  resize: none;
 }
 
 .stats {
@@ -56,7 +66,8 @@
   width: 2px;
   height: 1.2em;
   
-  vertical-align: bottom;
+  /* align caret to the text baseline so it follows wrapped lines */
+  vertical-align: text-bottom;
   animation: blink 1s steps(1) infinite;
   margin-left: -1px;
   background-color: white;
