@@ -3,11 +3,12 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koodiracer – mäng</title>
+    <title>Koodiracer - mäng</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto+Mono:wght@400;700&display=swap"
       rel="stylesheet">
     <link rel="stylesheet" href="stiil.css">
+    <link rel="stylesheet" href="äpp.css">
   </head>
   <body>
     <header class="site-header">
@@ -28,17 +29,32 @@
     </header>
 
     <main>
+
       <div class="container">
+        <section class="game">
+          <div id="textDisplay" class="text-display" aria-live="polite"></div>
+          <input id="hiddenInput" type="text" autofocus autocomplete="off"
+            autocorrect="off" autocapitalize="off" spellcheck="false">
+            
+          <div class="stats">
+            <span id="wpm">0 WPM</span> ·
+            <span id="accuracy">100% täpsus</span> ·
+            <span id="errors">0 viga</span>
+          </div>
+          <button id="restartBtn" class="btn-ghost">Taaskäivita</button>
+        </section>
+      </div>
 
-      </main>
+        
 
-      <footer class="site-footer">
-        <div class="container footer-inner">
-          <p>© <span id="year">2025</span> Koodiracer. Kõik õigused
-            kaitstud.</p>
-          <p class="small-links">
-            <a href>Privaatsus</a> · <a href>Kasutustingimused</a>
-          </p>
-        </div>
-      </body>
-    </html>
+        <footer class="site-footer">
+          <div class="container footer-inner">
+            <p>© <span id="year">2025</span> Koodiracer. Kõik õigused
+              kaitstud.</p>
+            <p class="small-links">
+              <a href>Privaatsus</a> · <a href>Kasutustingimused</a>
+            </p>
+          </div>
+          <script src="äpp.js"></script>
+        </body>
+      </html>

@@ -1,0 +1,68 @@
+.game {
+  text-align: center;
+}
+
+.text-display {
+  background: var(--card);
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.05);
+  min-height: 140px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  text-align: left;
+  cursor: text;
+}
+
+.text-display span.correct {
+  color: #59dc68;
+}
+
+.text-display span.incorrect {
+  color: #ff6b6b;
+  background: rgba(255,107,107,0.1);
+  border-radius: 3px;
+}
+
+#hiddenInput {
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.stats {
+  color: var(--muted);
+  margin-top: 12px;
+}
+
+.btn-ghost {
+  margin-top: 14px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.btn-ghost:hover {
+  color: #fff;
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* Kursor */
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  background: var(--accent-2);
+  vertical-align: bottom;
+  animation: blink 1s steps(1) infinite;
+  margin-left: -1px;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
