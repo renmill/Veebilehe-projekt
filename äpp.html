@@ -13,7 +13,6 @@
   <body>
     <header class="site-header">
       <div class="container header-inner">
-        <!-- lihtne SVG-logo, tüpograafiline viide kirjutusmasinale -->
         <div class="logo" aria-hidden="true">
           <a href="index.html">
             <img src="logo.svg" alt="Koodiraceri logo" width="58" height="58">
@@ -29,10 +28,14 @@
     </header>
 
     <main>
-
       <div class="container">
         <section class="game">
-          <div id="textDisplay" class="text-display" aria-live="polite"></div>
+          <!-- mängu tekstiala koos rea numbritega -->
+          <div class="editor-container">
+            <div class="line-numbers" id="lineNumbers">1</div>
+            <div id="textDisplay" class="text-display" aria-live="polite"></div>
+          </div>
+
           <textarea id="hiddenInput" rows="1" autofocus autocomplete="off"
             autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
             
@@ -45,16 +48,31 @@
         </section>
       </div>
 
-        
+      <footer class="site-footer">
+        <div class="container footer-inner">
+          <p>© <span id="year">2025</span> Koodiracer. Kõik õigused kaitstud.</p>
+          <p class="small-links">
+            <a href="#">Privaatsus</a> · <a href="#">Kasutustingimused</a>
+          </p>
+        </div>
+      </footer>
 
-        <footer class="site-footer">
-          <div class="container footer-inner">
-            <p>© <span id="year">2025</span> Koodiracer. Kõik õigused
-              kaitstud.</p>
-            <p class="small-links">
-              <a href>Privaatsus</a> · <a href>Kasutustingimused</a>
-            </p>
-          </div>
-          <script src="äpp.js"></script>
-        </body>
-      </html>
+      <script src="äpp.js"></script>
+      <script>
+        // Reanumbrite dünaamiline uuendamine
+        const textDisplay = document.getElementById("textDisplay");
+        const lineNumbers = document.getElementById("lineNumbers");
+
+        function updateLineNumbers() {
+          const lines = textDisplay.textContent.split("\n").length || 1;
+          let html = "";
+          for (let i = 1; i <= lines; i++) html += i + "\n";
+          lineNumbers.textContent = html;
+        }
+
+        const observer = new MutationObserver(updateLineNumbers);
+        observer.observe(textDisplay, { childList: true, subtree: true, characterData: true });
+        updateLineNumbers();
+      </script>
+    </body>
+</html>

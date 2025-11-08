@@ -1,146 +1,102 @@
-const textDisplay = document.getElementById('textDisplay');
-const hiddenInput = document.getElementById('hiddenInput');
-const restartBtn = document.getElementById('restartBtn');
-const wpmEl = document.getElementById('wpm');
-const accuracyEl = document.getElementById('accuracy');
-const errorsEl = document.getElementById('errors');
-let caret = document.createElement('span');
+// === Koodiracer – mängu loogika + rea numbrid ===
 
-caret.className = 'caret';
-
-const text = `\nfunction randomGreeting() {\n\tconst index = Math.floor(Math.random() * greetings.length);\n\treturn greetings[index];\n}\n\nconsole.log(randomGreeting());\n";`;
+// Elementide viited
+const textDisplay = document.getElementById("textDisplay");
+const hiddenInput = document.getElementById("hiddenInput");
+const restartBtn = document.getElementById("restartBtn");
+const wpmSpan = document.getElementById("wpm");
+const accuracySpan = document.getElementById("accuracy");
+const errorsSpan = document.getElementById("errors");
+const lineNumbers = document.getElementById("lineNumbers");
 
 let startTime = null;
-let finished = false;
+let correctChars = 0;
+let totalTyped = 0;
+let errors = 0;
+let timerInterval = null;
 
-function renderText() {
-    textDisplay.innerHTML = '';
-    for (const ch of text) {
-        const span = document.createElement('span');
+// --- Näidis tekst, kuni lisad dünaamilise sõnade valiku ---
+const sampleCode = `for i in range(5):
+    print("Tere maailm!")
+print("Koodiracer!")`;
 
-        if (ch === '\n') {
-            span.className = 'newline';
-            span.textContent = '\n';
-        } else if (ch === '\t') {
-            span.textContent = '\t';
-        } else {
-            span.textContent = ch;
-        }
-
-        textDisplay.appendChild(span);
-    }
-    // after rendering text, try to adjust font size to fit the container
-    adjustFontSizeToFit();
+// Teksti kuvamine mängualal
+function loadText() {
+  textDisplay.innerHTML = "";
+  sampleCode.split("").forEach(char => {
+    const span = document.createElement("span");
+    span.textContent = char;
+    textDisplay.appendChild(span);
+  });
+  hiddenInput.value = "";
+  startTime = null;
+  correctChars = 0;
+  totalTyped = 0;
+  errors = 0;
+  updateStats();
+  updateLineNumbers();
 }
 
-function reset() {
-    startTime = null;
-    finished = false;
-    hiddenInput.value = '';
-    renderText();
-    wpmEl.textContent = '0 WPM';
-    accuracyEl.textContent = '100% täpsus';
-    errorsEl.textContent = '0 viga';
-}
+// Reaalne mänguloogika
+hiddenInput.addEventListener("input", () => {
+  const input = hiddenInput.value;
+  const characters = textDisplay.querySelectorAll("span");
 
+  totalTyped = input.length;
+  if (!startTime) startTime = new Date();
 
-function updateTyping() {
-    const input = hiddenInput.value;
-    const chars = textDisplay.querySelectorAll('span:not(.caret)'); // mine putsi kui kaua aega mul läks et aru saada, et see ongi kurja juur.
+  let allCorrect = true;
+  correctChars = 0;
+  errors = 0;
 
-    let correct = 0;
-    let wrong = 0;
-
-    chars.forEach((span, i) => {
-        const typedChar = input[i];
-
-        span.classList.remove('correct', 'incorrect');
-        if (typedChar == null) { return }
-        else if (typedChar === span.textContent) {
-            span.classList.add('correct');
-            correct++;
-        } else {
-            span.classList.add('incorrect');
-            wrong++;
-        }
-
-    });
-
-    if (startTime === null && input.length > 0) {
-        startTime = Date.now();
-    }
-
-    caret.remove();
-    const caretIndex = Math.min(input.length, chars.length);
-    if (chars[caretIndex]) {
-        textDisplay.insertBefore(caret, chars[caretIndex]);
+  characters.forEach((span, index) => {
+    const typedChar = input[index];
+    if (typedChar == null) {
+      span.classList.remove("correct", "incorrect");
+      allCorrect = false;
+    } else if (typedChar === span.textContent) {
+      span.classList.add("correct");
+      span.classList.remove("incorrect");
+      correctChars++;
     } else {
-        textDisplay.appendChild(caret);
+      span.classList.add("incorrect");
+      span.classList.remove("correct");
+      errors++;
+      allCorrect = false;
     }
+  });
 
+  updateStats();
 
-
-
-    console.log(input);
-    console.log("typedChar", input[input.length - 1]);
-
-
-
-    const elapsed = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
-    const wpm = elapsed > 0 ? Math.round((input.length / 5) / elapsed) : 0;
-    const accuracy = input.length ? Math.round((correct / input.length) * 100) : 100;
-
-    wpmEl.textContent = `${wpm} WPM`;
-    accuracyEl.textContent = `${accuracy}% täpsus`;
-    errorsEl.textContent = `${wrong} viga`;
-
-    if (input.length === text.length && !finished) {
-        finished = true;
-        hiddenInput.blur();
-        caret.remove();
-        textDisplay.insertAdjacentHTML('beforeend', `<div style="margin-top:10px;color:var(--muted)">Valmis!</div>`);
-    }
-}
-
-function adjustFontSizeToFit() {
-    const el = textDisplay;
-    const cs = window.getComputedStyle(el);
-    let fontSize = parseFloat(cs.fontSize);
-    const minFont = 10; // don't go smaller than 10px
-    el.style.fontSize = fontSize + 'px';
-
-    let attempts = 0;
-    while ((el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth) && fontSize > minFont && attempts < 40) {
-        fontSize -= 1;
-        el.style.fontSize = fontSize + 'px';
-        attempts++;
-    }
-}
-
-hiddenInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        const start = hiddenInput.selectionStart;
-        const end = hiddenInput.selectionEnd;
-        hiddenInput.value = hiddenInput.value.slice(0, start) + '\n' + hiddenInput.value.slice(end);
-        hiddenInput.selectionStart = hiddenInput.selectionEnd = start + 1;
-        updateTyping();
-    } else if (e.key === 'Tab') {
-        e.preventDefault();
-        const start = hiddenInput.selectionStart;
-        const end = hiddenInput.selectionEnd;
-        hiddenInput.value = hiddenInput.value.slice(0, start) + '\t' + hiddenInput.value.slice(end);
-        hiddenInput.selectionStart = hiddenInput.selectionEnd = start + 1;
-        updateTyping();
-    }
+  if (allCorrect && input.length === sampleCode.length) {
+    clearInterval(timerInterval);
+  }
 });
 
+// WPM ja täpsus
+function updateStats() {
+  const elapsed = startTime ? (new Date() - startTime) / 1000 / 60 : 0;
+  const wpm = elapsed > 0 ? Math.round((correctChars / 5) / elapsed) : 0;
+  const accuracy = totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 100;
+  wpmSpan.textContent = `${wpm} WPM`;
+  accuracySpan.textContent = `${accuracy}% täpsus`;
+  errorsSpan.textContent = `${errors} viga`;
+}
 
-window.addEventListener('resize', () => adjustFontSizeToFit());
+// --- Reanumbrite uuendamine ---
+function updateLineNumbers() {
+  const lines = textDisplay.textContent.split("\n").length || 1;
+  let html = "";
+  for (let i = 1; i <= lines; i++) html += i + "\n";
+  lineNumbers.textContent = html;
+}
 
-// hoiame textDisplay fookuses
-textDisplay.addEventListener('click', () => hiddenInput.focus());
-hiddenInput.addEventListener('input', updateTyping);
-restartBtn.addEventListener('click', reset);
+const observer = new MutationObserver(updateLineNumbers);
+observer.observe(textDisplay, { childList: true, subtree: true, characterData: true });
 
-reset();
+// --- Restart ---
+restartBtn.addEventListener("click", loadText);
+
+// --- Algkäivitus ---
+window.addEventListener("load", loadText);
+updateLineNumbers();
