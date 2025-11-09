@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html lang="et">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Koodiracer - mäng</title>
+
+    <!-- Fontid ja stiilid -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto+Mono:wght@400;700&display=swap"
-      rel="stylesheet">
-    <link rel="stylesheet" href="stiil.css">
-    <link rel="stylesheet" href="äpp.css">
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="stiil.css" />
+    <link rel="stylesheet" href="äpp.css" />
   </head>
+
   <body>
+    <!-- Ülemine päis ja nav -->
     <header class="site-header">
       <div class="container header-inner">
         <div class="logo" aria-hidden="true">
           <a href="index.html">
-            <img src="logo.svg" alt="Koodiraceri logo" width="58" height="58">
+            <img src="logo.svg" alt="Koodiraceri logo" width="58" height="58" />
           </a>
         </div>
 
@@ -30,20 +35,33 @@
     <main>
       <div class="container">
         <section class="game">
-          <!-- mängu tekstiala koos rea numbritega -->
+
           <div class="editor-container">
+            <!-- Vasak riba rea numbrite jaoks -->
             <div class="line-numbers" id="lineNumbers">1</div>
+
+            <!-- Parempoolne ala, kus kuvatakse mängu tekst -->
             <div id="textDisplay" class="text-display" aria-live="polite"></div>
           </div>
 
-          <textarea id="hiddenInput" rows="1" autofocus autocomplete="off"
-            autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
-            
+          <!-- Peidetud textarea – kasutaja sisestus toimub siin (et vältida tekstiala fookuse kaotust) -->
+          <textarea
+            id="hiddenInput"
+            rows="1"
+            autofocus
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+          ></textarea>
+
+          <!-- Mängu statistika (WPM, täpsus, vead) -->
           <div class="stats">
             <span id="wpm">0 WPM</span> ·
             <span id="accuracy">100% täpsus</span> ·
             <span id="errors">0 viga</span>
           </div>
+
           <button id="restartBtn" class="btn-ghost">Taaskäivita</button>
         </section>
       </div>
@@ -57,22 +75,8 @@
         </div>
       </footer>
 
+      <!-- Mängu loogika -->
       <script src="äpp.js"></script>
-      <script>
-        // Reanumbrite dünaamiline uuendamine
-        const textDisplay = document.getElementById("textDisplay");
-        const lineNumbers = document.getElementById("lineNumbers");
-
-        function updateLineNumbers() {
-          const lines = textDisplay.textContent.split("\n").length || 1;
-          let html = "";
-          for (let i = 1; i <= lines; i++) html += i + "\n";
-          lineNumbers.textContent = html;
-        }
-
-        const observer = new MutationObserver(updateLineNumbers);
-        observer.observe(textDisplay, { childList: true, subtree: true, characterData: true });
-        updateLineNumbers();
-      </script>
-    </body>
+    </main>
+  </body>
 </html>

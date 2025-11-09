@@ -1,13 +1,13 @@
-// === Koodiracer – mängu loogika + rea numbrid ===
+// === Koodiracer – mängu loogika ja rea numbrite süsteem ===
 
-// Elementide viited
-const textDisplay = document.getElementById("textDisplay");
-const hiddenInput = document.getElementById("hiddenInput");
+// --- Elementide viited HTML-ist ---
+const textDisplay = document.getElementById("textDisplay"); // ala, kus kuvatakse tekst
+const hiddenInput = document.getElementById("hiddenInput"); // kasutaja sisestus (nähtamatu)
 const restartBtn = document.getElementById("restartBtn");
 const wpmSpan = document.getElementById("wpm");
 const accuracySpan = document.getElementById("accuracy");
 const errorsSpan = document.getElementById("errors");
-const lineNumbers = document.getElementById("lineNumbers");
+const lineNumbers = document.getElementById("lineNumbers"); // rea numbrite veerg
 
 let startTime = null;
 let correctChars = 0;
@@ -15,45 +15,44 @@ let totalTyped = 0;
 let errors = 0;
 let timerInterval = null;
 
-// --- Näidis tekst, kuni lisad dünaamilise sõnade valiku ---
 const sampleCode = `for i in range(5):
     print("Tere maailm!")
 print("Koodiracer!")`;
 
-// Teksti kuvamine mängualal
 function loadText() {
-  textDisplay.innerHTML = "";
+  textDisplay.innerHTML = ""; // puhasta ala
   sampleCode.split("").forEach(char => {
     const span = document.createElement("span");
     span.textContent = char;
     textDisplay.appendChild(span);
   });
+
   hiddenInput.value = "";
   startTime = null;
   correctChars = 0;
   totalTyped = 0;
   errors = 0;
+
   updateStats();
-  updateLineNumbers();
+  updateLineNumbers(); // kuvab õiged reanumbrid alguses
 }
 
-// Reaalne mänguloogika
+// --- kasutaja sisestuse funk ---
 hiddenInput.addEventListener("input", () => {
   const input = hiddenInput.value;
   const characters = textDisplay.querySelectorAll("span");
 
   totalTyped = input.length;
-  if (!startTime) startTime = new Date();
+  if (!startTime) startTime = new Date(); // taimeri käivitus esimesel klahvivajutusel
 
-  let allCorrect = true;
   correctChars = 0;
   errors = 0;
 
+  // iga sisestatud tähemärgi kontroll
   characters.forEach((span, index) => {
     const typedChar = input[index];
     if (typedChar == null) {
       span.classList.remove("correct", "incorrect");
-      allCorrect = false;
     } else if (typedChar === span.textContent) {
       span.classList.add("correct");
       span.classList.remove("incorrect");
@@ -62,29 +61,32 @@ hiddenInput.addEventListener("input", () => {
       span.classList.add("incorrect");
       span.classList.remove("correct");
       errors++;
-      allCorrect = false;
     }
   });
 
   updateStats();
 
-  if (allCorrect && input.length === sampleCode.length) {
+  if (input.length === sampleCode.length && errors === 0) {
     clearInterval(timerInterval);
   }
 });
 
-// WPM ja täpsus
+// --- uuendab WPM, täpsust ja vigade arvu ---
 function updateStats() {
-  const elapsed = startTime ? (new Date() - startTime) / 1000 / 60 : 0;
+  const elapsed = startTime ? (new Date() - startTime) / 1000 / 60 : 0; // minutites
   const wpm = elapsed > 0 ? Math.round((correctChars / 5) / elapsed) : 0;
   const accuracy = totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 100;
+
   wpmSpan.textContent = `${wpm} WPM`;
   accuracySpan.textContent = `${accuracy}% täpsus`;
   errorsSpan.textContent = `${errors} viga`;
 }
 
-// --- Reanumbrite uuendamine ---
+// === Rea numbrite süsteem ===
+
+// Funktsioon: loendab, mitu reavahetust tekstis on, ja kuvab need vasakul
 function updateLineNumbers() {
+  // Kui tekst on tühi, kuvame vähemalt ühe rea
   const lines = textDisplay.textContent.split("\n").length || 1;
   let html = "";
   for (let i = 1; i <= lines; i++) html += i + "\n";
@@ -94,9 +96,9 @@ function updateLineNumbers() {
 const observer = new MutationObserver(updateLineNumbers);
 observer.observe(textDisplay, { childList: true, subtree: true, characterData: true });
 
-// --- Restart ---
+// --- Nupp “Taaskäivita” ---
 restartBtn.addEventListener("click", loadText);
 
-// --- Algkäivitus ---
+// --- Lehe avamisel ---
 window.addEventListener("load", loadText);
 updateLineNumbers();
