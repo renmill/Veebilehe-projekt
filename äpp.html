@@ -15,7 +15,6 @@
   </head>
 
   <body>
-    <!-- Ülemine päis ja nav -->
     <header class="site-header">
       <div class="container header-inner">
         <div class="logo" aria-hidden="true">
@@ -32,51 +31,100 @@
       </div>
     </header>
 
-    <main>
+    <main id="main">
       <div class="container">
         <section class="game">
 
-          <div class="editor-container">
-            <!-- Vasak riba rea numbrite jaoks -->
-            <div class="line-numbers" id="lineNumbers">1</div>
-
-            <!-- Parempoolne ala, kus kuvatakse mängu tekst -->
-            <div id="textDisplay" class="text-display" aria-live="polite"></div>
+          <!-- ALGNE START-EKRAAN -->
+          <div id="gameStart" class="game-start">
+            <h1 class="game-title">Koodiracer</h1>
+            <p class="game-subtitle">
+              Vajuta “Alusta mängu”, et näha koodijuppi ja testida oma kiirust.
+            </p>
+            <button id="startGameBtn" class="btn-primary btn-large">
+              Alusta mängu
+            </button>
           </div>
 
-          <!-- Peidetud textarea – kasutaja sisestus toimub siin (et vältida tekstiala fookuse kaotust) -->
-          <textarea
-            id="hiddenInput"
-            rows="1"
-            autofocus
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
-          ></textarea>
+          <!-- PÄRIS MÄNG (alguses peidus) -->
+          <div id="gameContainer" class="game-container hidden">
 
-          <!-- Mängu statistika (WPM, täpsus, vead) -->
-          <div class="stats">
-            <span id="wpm">0 WPM</span> ·
-            <span id="accuracy">100% täpsus</span> ·
-            <span id="errors">0 viga</span>
+            <!-- Ülariba: keel vasakul, stopper paremal -->
+            <header class="game-header">
+              <div class="game-tags">
+                <span id="languageTag" class="pill pill-lang">Keel</span>
+                <span id="snippetInfo" class="pill pill-ghost">0 rida</span>
+              </div>
+              <div class="game-timer">
+                <span id="time" class="pill pill-time">00:00.00</span>
+              </div>
+            </header>
+
+            <!-- Koodijupi nimi -->
+            <h2 id="snippetTitle" class="snippet-title"></h2>
+
+            <!-- Editor + rea numbrid -->
+            <div class="editor-container">
+              <div class="line-numbers" id="lineNumbers">1</div>
+              <div id="textDisplay" class="text-display" aria-live="polite"></div>
+            </div>
+
+            <!-- Peidetud sisestus (textbox, kus Tab töötab) -->
+            <textarea
+              id="hiddenInput"
+              rows="1"
+              autofocus
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+            ></textarea>
+
+            <!-- Statistika -->
+            <div class="stats">
+              <span id="wpm">0 WPM</span> ·
+              <span id="accuracy">100% täpsus</span> ·
+              <span id="errors">0 viga</span>
+            </div>
+
+            <button id="restartBtn" class="btn-ghost">Taaskäivita</button>
+
+            <!-- Finiši tulemuskaart (alguses peidus) -->
+            <div
+              id="resultOverlay"
+              class="result-overlay hidden"
+              aria-hidden="true"
+            >
+              <div class="result-card">
+                <h3>Tulemus</h3>
+                <p class="result-primary">
+                  <span id="finalWpm">0</span> WPM
+                </p>
+                <p class="result-secondary">
+                  <span id="finalAccuracy">100</span>% täpsus ·
+                  <span id="finalTime">00:00.00</span> ·
+                  <span id="finalErrors">0</span> viga
+                </p>
+                <button id="playAgainBtn" class="btn-primary">
+                  Proovi uuesti
+                </button>
+              </div>
+            </div>
           </div>
 
-          <button id="restartBtn" class="btn-ghost">Taaskäivita</button>
         </section>
       </div>
-
-      <footer class="site-footer">
-        <div class="container footer-inner">
-          <p>© <span id="year">2025</span> Koodiracer. Kõik õigused kaitstud.</p>
-          <p class="small-links">
-            <a href="#">Privaatsus</a> · <a href="#">Kasutustingimused</a>
-          </p>
-        </div>
-      </footer>
-
-      <!-- Mängu loogika -->
-      <script src="äpp.js"></script>
     </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>© <span id="year">2025</span> Koodiracer. Kõik õigused kaitstud.</p>
+        <p class="small-links">
+          <a href="#">Privaatsus</a> · <a href="#">Kasutustingimused</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="äpp.js"></script>
   </body>
 </html>
