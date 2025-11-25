@@ -1,4 +1,4 @@
-// === Koodiracer – Monkeytype stiilis koodimäng ===
+// === Koodiracer – Monkeytype stiilis koodimäng kumulatiivsete vigadega ===
 
 // DOM elemendid
 const textDisplay = document.getElementById("textDisplay");
@@ -29,8 +29,11 @@ const playAgainBtn = document.getElementById("playAgainBtn");
 // mängu olek
 let startTime = null;
 let correctChars = 0;
-let totalTyped = 0;
-let errors = 0;
+let totalTyped = 0;          // hetkel sisestuse pikkus (input.length)
+let errors = 0;              // kuvatav vigade arv (võrdub cumulativeErrors)
+let cumulativeErrors = 0;    // kõigi VALETE vajutuste kogusumma
+let totalKeystrokes = 0;     // kõik lisatud sümbolid (ei kasutata otseselt, aga hoian alles)
+let lastValue = "";          // eelmise input'i väärtus
 let currentSnippet = null;
 let caretSpan = null;
 let isFinished = false;
@@ -190,7 +193,7 @@ function updateSnippetMeta() {
   if (snippetTitle) snippetTitle.textContent = currentSnippet.title;
 }
 
-// --- statistika (WPM loogika) ---
+// --- statistika (WPM + täpsus) ---
 function computeStats() {
   const elapsedMinutes = startTime
     ? (new Date() - startTime) / 1000 / 60
@@ -200,8 +203,10 @@ function computeStats() {
   const words = correctChars / 5;
   const wpm = elapsedMinutes > 0 ? Math.round(words / elapsedMinutes) : 0;
 
+  // Täpsus: õiged tähemärgid võrreldes kõigi katsetega (õiged + vead)
+  const attempts = correctChars + cumulativeErrors;
   const accuracy =
-    totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 100;
+    attempts > 0 ? Math.round((correctChars / attempts) * 100) : 100;
 
   return { wpm, accuracy };
 }
@@ -254,10 +259,13 @@ function loadText() {
   renderSnippet();
 
   hiddenInput.value = "";
+  lastValue = "";
   startTime = null;
   correctChars = 0;
   totalTyped = 0;
   errors = 0;
+  cumulativeErrors = 0;
+  totalKeystrokes = 0;
   isFinished = false;
 
   stopTimer();
@@ -278,42 +286,94 @@ hiddenInput.addEventListener("input", () => {
   if (!currentSnippet || isFinished) return;
 
   const input = hiddenInput.value;
-  const characters = textDisplay.querySelectorAll("span.code-char");
   const target = currentSnippet.code;
+  const characters = textDisplay.querySelectorAll("span.code-char");
 
   totalTyped = input.length;
 
+  // Esimene vajutus → käivita taimer
   if (!startTime && totalTyped > 0) {
     startTime = new Date();
     startTimer();
   }
 
-  correctChars = 0;
-  errors = 0;
+  // 1) Uued lisandunud tähemärgid (vs eelmine väärtus)
+  if (input.length > lastValue.length) {
+    const addedCount = input.length - lastValue.length;
+    const startIndex = lastValue.length; // eeldame, et kirjutatakse lõppu
 
-  characters.forEach((span, index) => {
-    const expectedChar = target[index];
-    const typedChar = input[index];
+    for (let i = 0; i < addedCount; i++) {
+      const pos = startIndex + i;
+      const ch = input[pos];
+      totalKeystrokes++;
+
+      const expectedChar = target[pos];
+
+      // Kui expectedChar ei eksisteeri (kirjutad üle piiri)
+      // või täht ei klapi → loeme veaks
+      if (expectedChar === undefined || ch !== expectedChar) {
+        cumulativeErrors++;
+      }
+    }
+  } else if (input.length < lastValue.length) {
+    // kustutamine / backspace – ei vähenda vigu,
+    // sest tahame kumulatiivseid vigu alles hoida
+  }
+
+  // 2) Visuaalne võrdlus: õiged/valed tähed jooksvas sisus
+  correctChars = 0;
+  errors = cumulativeErrors; // kuvatav vigade arv = kumulatiivne
+
+  // eemalda eelmised extra-error spanid (lisatähed)
+  textDisplay.querySelectorAll("span.extra-error").forEach((el) => el.remove());
+
+  for (let i = 0; i < characters.length; i++) {
+    const span = characters[i];
+    const expectedChar = target[i];
+    const typedChar = input[i];
 
     if (typedChar == null) {
       span.classList.remove("correct", "incorrect");
+      span.removeAttribute("data-typed");
     } else if (typedChar === expectedChar) {
       span.classList.add("correct");
       span.classList.remove("incorrect");
+      span.removeAttribute("data-typed");
       correctChars++;
     } else {
+      // vale täht ekraanil (kuvame punase ja läbikriipsutatud sisestatud tähe)
       span.classList.add("incorrect");
       span.classList.remove("correct");
-      errors++;
+      span.setAttribute("data-typed", typedChar);
+      // NB: siia EI lisa cumulativeErrors, sest see loeti juba "lisandunud tähemärgi" faasis
     }
-  });
+  }
+
+  // 3) ekstra tähed, kui sisestus on targetist PIKEM
+  if (input.length > target.length) {
+    const extra = input.slice(target.length);
+
+    // need konkreetsed lisandunud tähed on juba cumulativeErrors alla loetud,
+    // siin teeme ainult visuaali:
+    extra.split("").forEach((ch) => {
+      const extraSpan = document.createElement("span");
+      extraSpan.textContent = ch;
+      extraSpan.classList.add("extra-error");
+      textDisplay.appendChild(extraSpan);
+    });
+  }
 
   updateStats();
   updateCaretPosition(totalTyped);
 
-  if (input.length === target.length && errors === 0) {
+  // 4) Mäng on lõppenud siis, kui sisestus kattub sihtkoodiga.
+  // Vead ei takista lõpetamist, vaid jäävad statistikasse.
+  if (input === target) {
     finishGame();
   }
+
+  // uuendame eelmise väärtuse
+  lastValue = input;
 });
 
 // Tab: viib indent'i täpselt rea esimese sümbolini
@@ -351,6 +411,7 @@ hiddenInput.addEventListener("keydown", (e) => {
     const newPos = cursor + indentStr.length;
     hiddenInput.selectionStart = hiddenInput.selectionEnd = newPos;
 
+    // Tab lisab tegelikult mitu tühikut ühe keydowniga → käsitleme neid nagu uusi tähemärke:
     hiddenInput.dispatchEvent(new Event("input"));
   }
 });
@@ -382,7 +443,7 @@ if (restartBtn) restartBtn.addEventListener("click", loadText);
 if (playAgainBtn) playAgainBtn.addEventListener("click", loadText);
 if (startGameBtn) startGameBtn.addEventListener("click", showGame);
 
-// lehe laadimisel – vaid overlay peitmine ja reanumbrid algseisus
+// lehe laadimisel
 window.addEventListener("load", () => {
   hideResultOverlay();
   updateLineNumbers();
