@@ -28,5 +28,33 @@
   <nav>
     <a href="index.html">Tagasi avalehele</a>
   </nav>
+  <script>
+    // Leiame nupu
+    const resetBtn = document.getElementById('resetButton');
+    const tableBody = document.querySelector('tbody');
+
+    // Kontrollime, kas kasutaja on varem tühjendanud (lihtne simulatsioon)
+    if (localStorage.getItem('leaderboardCleared') === 'true') {
+      tableBody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#888;">Edetabel on tühi</td></tr>';
+    }
+
+    resetBtn.addEventListener('click', () => {
+      // 1. Küsime kinnitust
+      if (confirm("Oled kindel, et soovid edetabeli tühjendada?")) {
+        
+        // 2. Tühjendame "mälu"
+        localStorage.removeItem('lastWpm'); // Kustutab ka mängu mälestuse
+        localStorage.setItem('leaderboardCleared', 'true'); // Märgime, et on tühi
+
+        // 3. Kustutame visuaalselt read tabelist
+        tableBody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#888;">Tühjendatud...</td></tr>';
+        
+        // Väike viivitus ilu pärast
+        setTimeout(() => {
+           tableBody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#888;">Edetabel on tühi</td></tr>';
+        }, 500);
+      }
+    });
+  </script>
 </body>
 </html>
