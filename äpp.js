@@ -239,7 +239,29 @@ function finishGame() {
 
   const { wpm, accuracy } = computeStats();
 
-  if (finalWpmSpan) finalWpmSpan.textContent = String(wpm);
+  const lastWpm = localStorage.getItem('lastWpm');
+  let diffMessage = "";
+
+  if (lastWpm !== null) {
+    const diff = wpm - parseInt(lastWpm);
+    if (diff > 0) {
+      diffMessage = `(Suurepärane! +${diff} võrreldes eelmisega)`;
+    } else if (diff < 0) {
+      diffMessage = `(Veidi aeglasem kui eelmine kord: ${diff})`;
+    } else {
+      diffMessage = `(Täpselt sama, mis eelmine kord)`;
+    }
+  } else {
+    diffMessage = "(Esimene salvestatud tulemus!)";
+  }
+
+  localStorage.setItem('lastWpm', wpm);
+
+
+  if (finalWpmSpan) {
+    finalWpmSpan.innerHTML = `${wpm} <span style="font-size:0.6em; color:#666; display:block;">${diffMessage}</span>`;
+  }
+  
   if (finalAccuracySpan) finalAccuracySpan.textContent = String(accuracy);
   if (finalErrorsSpan) finalErrorsSpan.textContent = String(errors);
   if (finalTimeSpan && timeSpan) finalTimeSpan.textContent = timeSpan.textContent;
@@ -253,7 +275,6 @@ function finishGame() {
   hiddenInput.blur();
 }
 
-// --- mängu reset / algus ---
 function loadText() {
   pickRandomSnippet();
   renderSnippet();
