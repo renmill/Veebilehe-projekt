@@ -1,4 +1,5 @@
 // === Koodiracer – Monkeytype stiilis koodimäng kumulatiivsete vigadega ===
+// JS koodi kirjutamisel on kasutatud ChatGPT genereeritud koodi
 
 // DOM elemendid
 const textDisplay = document.getElementById("textDisplay");
